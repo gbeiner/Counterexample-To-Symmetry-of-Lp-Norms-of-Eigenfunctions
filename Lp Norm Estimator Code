@@ -1,0 +1,48 @@
+from math import sqrt, sin, cos
+num = 1500 
+step = 1/num #gives width of partititon for numerical inegration
+step3 = step**3 #volume of each cube in partition
+
+#create list 'ends' containing all the points in the partition
+ends = [float(0)]
+for p in range(1,num):
+   ends.append(float(p/num))
+   
+PI=3.141592653589793238463 #numerical approximation for pi
+dev = 1.1*(3*step*PI*sqrt(3)) #dev gives upper-bound on the difference between eigenfunction's value at boundary and center of each cube
+
+#the definition of the eigenfunction f for which we wish to approximate its L^p norms
+def f(i,j,k):
+   return sin(2*PI*(i+j))-cos(2*PI*(j-k))-sin(2*PI*(i+k))
+
+powers = [0,1,2,3,4] #each power represents the integral estimated for a different L^p norm
+
+#calculation of integral estimates
+for power in powers: #loop over different L^p norms
+    U_pos_int =0   #initialize estimates of integrals: U for upper bound, L for lower bound, pos for positive part of f, neg for negative part
+    L_pos_int=0
+    U_neg_int =0
+    L_neg_int = 0
+    nodal_cubes = 0 #initialize number of 'nodal cubes' on which eigenfunction may vanish
+    #loop over cubes in partition to calculate integral
+    for i in ends:
+       for j in ends:
+          for k in ends:
+             val = f(i+step/2, j+step/2, k+step/2) #find value of eigenfunction at center of particular cube
+             if val > dev: #if eigenfunction is sufficiently positive at center point
+                 U_pos_int += ((val+dev)**power)*(step3) #add over-approximation of eigenfunction's p-norm in cube to upper-bound
+                 L_pos_int += ((val-dev)**power)*(step3) #add under-approximation of p-norm in cube to lower-bound
+             elif val < -dev: #if eigenfunction is sufficiently negative at center point
+                U_neg_int += ((-val+dev)**power)*(step3) #add over-approximation of absolute value of eigenfunction's p-norm in cube to upper-bound
+                L_neg_int += ((-val-dev)**power)*(step3) #add under-approximation of absolute value of p-norm in cube to lower-bound
+             else:
+                nodal_cubes += 1 #if eigenfunction is too close to zero at center point, we add it to the count of 'nodal cubes'
+    U_pos_int += (nodal_cubes)*((dev)**power)*(step3) #add over-approximation of eigenfunction's absolute value on nodal cubes to upper bounds
+    U_neg_int += (nodal_cubes)*((dev)**power)*(step3)
+    print('p=' +str(power)) #print relevant p-norm value
+    print('Upper bound positive p-norm is ' + str(U_pos_int)) #print final values for the bounds on the positive L^p norm
+    print('Lower bound positive p-norm is ' + str(L_pos_int))
+    print('Upper bound negative p-norm is ' + str(U_neg_int)) #print final values for the bounds on the negative L^p norm
+    print('Lower bound negative p-norm is ' + str(L_neg_int))
+    print('Count of nodal cubes is ' +str(nodal_cubes)) #print final count of 'nodal cubes'
+    print()
