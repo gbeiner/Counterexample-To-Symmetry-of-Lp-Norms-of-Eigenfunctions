@@ -37,8 +37,8 @@ for power in powers: #loop over different L^p norms
                 L_neg_int += ((-val-dev)**power)*(step3) #add under-approximation of absolute value of p-norm in cube to lower-bound
              else:
                 nodal_cubes += 1 #if eigenfunction is too to zero at center point, we add it to the count of 'nodal cubes'
-    U_pos_int += (nodal_cubes)*((dev)**power)*(step3) #add over-approximation of eigenfunction's absolute value on nodal cubes to upper bounds
-    U_neg_int += (nodal_cubes)*((dev)**power)*(step3)
+    U_pos_int += (nodal_cubes)*((2*dev)**power)*(step3) #add over-approximation of eigenfunction's absolute value on nodal cubes to upper bounds
+    U_neg_int += (nodal_cubes)*((2*dev)**power)*(step3)
     print('p=' +str(power)) #print relevant p-norm value
     print('Upper bound positive p-norm is ' + str(U_pos_int)) #print final values for the bounds on the positive L^p norm
     print('Lower bound positive p-norm is ' + str(L_pos_int))
